@@ -586,7 +586,9 @@ public class ExtensionLoader<T> {
                 if(names.length == 1) cachedDefaultName = names[0];
             }
         }
-        
+
+        // 从配置文件中加载扩展实现类
+        logger.warn(">>>>>>>>>>>>>>>>>>>从配置文件中加载扩展实现类:loadExtensionClasses=="+type.getName());
         Map<String, Class<?>> extensionClasses = new HashMap<String, Class<?>>();
         loadFile(extensionClasses, DUBBO_INTERNAL_DIRECTORY);
         loadFile(extensionClasses, DUBBO_DIRECTORY);

@@ -142,7 +142,7 @@ public class ConfigUtils {
     private static volatile Properties PROPERTIES;
     
     public static Properties getProperties() {
-        
+
         if (PROPERTIES == null) {
             synchronized (ConfigUtils.class) {
                 if (PROPERTIES == null) {
