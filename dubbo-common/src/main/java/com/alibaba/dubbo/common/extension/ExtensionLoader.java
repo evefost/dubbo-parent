@@ -70,9 +70,11 @@ public class ExtensionLoader<T> {
     private static final String DUBBO_INTERNAL_DIRECTORY = DUBBO_DIRECTORY + "internal/";
 
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
-    
+
+    //扩展loader 缓存，每种扩展接口只生成一个对应的loader,key:SPI 接口，value 对应的loader
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<Class<?>, ExtensionLoader<?>>();
 
+    //缓存所有扩展实例，如SpringContainer,RegistProtocal,SpringExtensionFactory
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<Class<?>, Object>();
 
     // ==============================
@@ -81,6 +83,7 @@ public class ExtensionLoader<T> {
 
     private final ExtensionFactory objectFactory;
 
+    //缓存扩展实现类，对应的名字
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<Class<?>, String>();
     
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<Map<String,Class<?>>>();
@@ -115,7 +118,8 @@ public class ExtensionLoader<T> {
             throw new IllegalArgumentException("Extension type(" + type + 
                     ") is not extension, because WITHOUT @" + SPI.class.getSimpleName() + " Annotation!");
         }
-        
+        //以扩展接口为key,获取其对应的ExtensionLoader,每个扩展接口的loader只创建一个，第一个加载的是Constainer,因为通过spring启动时，首先用到的是Container
+        // 如果没存在则创建一个对应的loader,并存入EXTENSION_LOADERS
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) {
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
@@ -748,6 +752,7 @@ public class ExtensionLoader<T> {
 
     /**
      * 创建adaptive 类代码，接类型必须有一个方法有@Adptivie注解
+     * 通过分析接口配置的adaptive规则动态生成adaptive类并且加载到ClassLoader中
      * @return
      */
     private String createAdaptiveExtensionClassCode() {

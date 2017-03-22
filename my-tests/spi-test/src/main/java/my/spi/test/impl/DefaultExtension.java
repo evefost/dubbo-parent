@@ -1,5 +1,6 @@
 package my.spi.test.impl;
 
+import com.alibaba.dubbo.common.URL;
 import my.spi.test.ExtensionType;
 import my.spi.test.MyFirstExtension;
 
@@ -8,7 +9,7 @@ import my.spi.test.MyFirstExtension;
  */
 public class DefaultExtension implements MyFirstExtension{
     @Override
-    public String sayHello(String name, ExtensionType type) {
+    public String sayHello(URL url, String name, ExtensionType type) {
         return "default extension say hello";
     }
 }

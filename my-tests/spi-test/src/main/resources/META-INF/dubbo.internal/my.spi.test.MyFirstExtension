@@ -1,2 +1,2 @@
-default=my.spi.test.impl.DefaultExtension
+test=my.spi.test.impl.DefaultExtension
 other=my.spi.test.impl.OtherExtension
