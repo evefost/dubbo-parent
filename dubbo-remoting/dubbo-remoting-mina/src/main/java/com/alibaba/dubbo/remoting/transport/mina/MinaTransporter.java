@@ -25,7 +25,7 @@ import com.alibaba.dubbo.remoting.Transporter;
 /**
  * @author ding.lid
  */
-public class MinaTransporter implements Transporter {
+public class MinaTransporter implements Transhttps://my.oschina.net/bieber/blog/418949porter {
     
     public static final String NAME = "mina";
 

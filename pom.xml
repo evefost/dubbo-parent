@@ -51,7 +51,8 @@
 		<module>dubbo-simple</module>
 		<module>dubbo-admin</module>
 		<module>dubbo-demo</module>
-	</modules>
+        <module>my-tests</module>
+    </modules>
 	<profiles>
 		<profile>
 			<id>test</id>

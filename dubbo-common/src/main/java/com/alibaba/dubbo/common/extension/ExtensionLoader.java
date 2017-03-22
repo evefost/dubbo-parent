@@ -593,11 +593,16 @@ public class ExtensionLoader<T> {
         loadFile(extensionClasses, DUBBO_INTERNAL_DIRECTORY);
         loadFile(extensionClasses, DUBBO_DIRECTORY);
         loadFile(extensionClasses, SERVICES_DIRECTORY);
+        logger.warn("############################="+extensionClasses.size());
+        logger.warn("---------------------");
+        logger.warn("---------------------");
+        logger.warn("---------------------");
         return extensionClasses;
     }
     
     private void loadFile(Map<String, Class<?>> extensionClasses, String dir) {
         String fileName = dir + type.getName();
+        logger.warn("file========:"+fileName);
         try {
             Enumeration<java.net.URL> urls;
             ClassLoader classLoader = findClassLoader();
@@ -740,7 +745,11 @@ public class ExtensionLoader<T> {
         com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
         return compiler.compile(code, classLoader);
     }
-    
+
+    /**
+     * 创建adaptive 类代码，接类型必须有一个方法有@Adptivie注解
+     * @return
+     */
     private String createAdaptiveExtensionClassCode() {
         StringBuilder codeBuidler = new StringBuilder();
         Method[] methods = type.getMethods();
