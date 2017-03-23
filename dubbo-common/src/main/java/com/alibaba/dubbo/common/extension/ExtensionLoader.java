@@ -92,6 +92,7 @@ public class ExtensionLoader<T> {
 
     private volatile Class<?> cachedAdaptiveClass = null;
 
+    //key,扩展别名，通过Holder 保持扩展实例
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<String, Holder<Object>>();
 
     private String cachedDefaultName;
@@ -106,7 +107,21 @@ public class ExtensionLoader<T> {
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
         return type.isAnnotationPresent(SPI.class);
     }
-    
+
+    /**
+     * 获取扩展loader
+     * 1,根据不同的@SPI接口，创建相应的extensionLoader
+     * 2,传入类必须为接口，且有@SPI注解
+     * ===================dubbo启动spi扩展执行====================
+     * 1.首先传入Container 扩展，
+     * 2.缓存中(EXTENSION_LOADERS)检查有没有 extensionLoader
+     * 3.没有则new ExtensionLoader,同时，如果ExtensionLoader(Class<?> clazz)传入的不是ExtensionFactory 类型，
+     *   会创建对应的ExtensionFactory(objectFactory)，
+     * 4.先创建ExtensionFactory 扩展的loader,再创container的loader
+     * @param type
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null)
@@ -130,6 +145,11 @@ public class ExtensionLoader<T> {
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
+        if(type == ExtensionFactory.class){
+           logger.error("==================ExtensionFactory loader创建=========================");
+        }else {
+            logger.error("=================其它Extension loader 创建==="+type.getSimpleName()+"========");
+        }
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
     
@@ -305,6 +325,7 @@ public class ExtensionLoader<T> {
      */
 	@SuppressWarnings("unchecked")
 	public T getExtension(String name) {
+	    logger.debug("getExtension name:"+name);
 		if (name == null || name.length() == 0)
 		    throw new IllegalArgumentException("Extension name == null");
 		if ("true".equals(name)) {
@@ -447,6 +468,14 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * 外部获取adaptive extension
+     * 创建container loader 过程中会创建ExtensionFactory(也是@SPI扩展)调用该方法
+     *  在dubbo-common :resoures/META-INF/com.alibaba.dubbo.common.extension.ExtensionFactory 下有两该工厂的扩展
+     *  adaptive=com.alibaba.dubbo.common.extension.factory.AdaptiveExtensionFactory
+     *  spi=com.alibaba.dubbo.common.extension.factory.SpiExtensionFactory
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public T getAdaptiveExtension() {
         Object instance = cachedAdaptiveInstance.get();
@@ -742,7 +771,12 @@ public class ExtensionLoader<T> {
         }
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
-    
+
+    /**
+     *  有  @Adaptive 注解的扩展接口才生成，且要有com.alibaba.dubbo.common.URL
+     * 动态生成adapter
+     * @return
+     */
     private Class<?> createAdaptiveExtensionClass() {
         String code = createAdaptiveExtensionClassCode();
         ClassLoader classLoader = findClassLoader();
@@ -759,6 +793,7 @@ public class ExtensionLoader<T> {
         StringBuilder codeBuidler = new StringBuilder();
         Method[] methods = type.getMethods();
         boolean hasAdaptiveAnnotation = false;
+        //检查方法有没有@Adaptive
         for(Method m : methods) {
             if(m.isAnnotationPresent(Adaptive.class)) {
                 hasAdaptiveAnnotation = true;
