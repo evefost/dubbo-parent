@@ -81,6 +81,7 @@ public class ExtensionLoader<T> {
 
     private final Class<?> type;
 
+    //扩展对象工厂，注入时用到
     private final ExtensionFactory objectFactory;
 
     //缓存扩展实现类，对应的名字
@@ -95,6 +96,7 @@ public class ExtensionLoader<T> {
     //key,扩展别名，通过Holder 保持扩展实例
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<String, Holder<Object>>();
 
+    //默认的扩展别名
     private String cachedDefaultName;
 
     private final Holder<Object> cachedAdaptiveInstance = new Holder<Object>();
@@ -469,7 +471,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 外部获取adaptive extension
+     * 外部获取adaptive extension，因为extension 实现可能会有多个，所以会通过andaptive 找出相适应的实现
      * 创建container loader 过程中会创建ExtensionFactory(也是@SPI扩展)调用该方法
      *  在dubbo-common :resoures/META-INF/com.alibaba.dubbo.common.extension.ExtensionFactory 下有两该工厂的扩展
      *  adaptive=com.alibaba.dubbo.common.extension.factory.AdaptiveExtensionFactory
@@ -478,6 +480,7 @@ public class ExtensionLoader<T> {
      */
     @SuppressWarnings("unchecked")
     public T getAdaptiveExtension() {
+        logger.warn("SSSSSSSSSSSSSgetAdaptiveExtension:"+type.getName());
         Object instance = cachedAdaptiveInstance.get();
         if (instance == null) {
             if(createAdaptiveInstanceError == null) {
@@ -529,10 +532,13 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     private T createExtension(String name) {
+        logger.warn("**********************createExtension:"+name+"  "+type.getName());
         Class<?> clazz = getExtensionClasses().get(name);
+
         if (clazz == null) {
             throw findException(name);
         }
+        logger.warn("createExtension:"+name+"  "+clazz.getName());
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
@@ -563,6 +569,7 @@ public class ExtensionLoader<T> {
                         Class<?> pt = method.getParameterTypes()[0];
                         try {
                             String property = method.getName().length() > 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : "";
+                            //参数类型，属性名
                             Object object = objectFactory.getExtension(pt, property);
                             if (object != null) {
                                 method.invoke(instance, object);
@@ -605,14 +612,23 @@ public class ExtensionLoader<T> {
         return classes;
 	}
 
+
+    /**
+     * 传入spi接口，读取META-INF/services/;META-INF/dubbo/;META-INF/dubbo/internal/
+     * 所配置接口的实现；key:扩展名，value 扩展的实现，如：spring=com.alibaba.dubbo.container.spring.SpringContainer
+     * @return
+     */
     // 此方法已经getExtensionClasses方法同步过。
     private Map<String, Class<?>> loadExtensionClasses() {
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if(defaultAnnotation != null) {
+
             String value = defaultAnnotation.value();
             if(value != null && (value = value.trim()).length() > 0) {
+                //如果@SPI有值，解释出默认的扩展点现实别名
                 String[] names = NAME_SEPARATOR.split(value);
                 if(names.length > 1) {
+                    //默认扩展实现名别只能设定一个
                     throw new IllegalStateException("more than 1 default extension name on extension " + type.getName()
                             + ": " + Arrays.toString(names));
                 }
@@ -670,6 +686,7 @@ public class ExtensionLoader<T> {
                                                         type + ", class line: " + clazz.getName() + "), class " 
                                                         + clazz.getName() + "is not subtype of interface.");
                                             }
+                                            //如果是adaptiveclass 就存入cachedAdaptiveClass
                                             if (clazz.isAnnotationPresent(Adaptive.class)) {
                                                 if(cachedAdaptiveClass == null) {
                                                     cachedAdaptiveClass = clazz;
@@ -827,6 +844,7 @@ public class ExtensionLoader<T> {
                         break;
                     }
                 }
+
                 // 有类型为URL的参数
                 if (urlTypeIndex != -1) {
                     // Null Point check
@@ -841,7 +859,7 @@ public class ExtensionLoader<T> {
                 else {
                     String attribMethod = null;
                     
-                    // 找到参数的URL属性
+                    // 找到参数有返回URL值的方法，如果没有则抛异常，像Protocol
                     LBL_PTS:
                     for (int i = 0; i < pts.length; ++i) {
                         Method[] ms = pts[i].getMethods();
@@ -862,11 +880,12 @@ public class ExtensionLoader<T> {
                         throw new IllegalStateException("fail to create adative class for interface " + type.getName()
                         		+ ": not found url parameter or url attribute in parameters of method " + method.getName());
                     }
-                    
+                    //有URL 属性的参数如果为空，抛异常
                     // Null point check
                     String s = String.format("\nif (arg%d == null) throw new IllegalArgumentException(\"%s argument == null\");",
                                     urlTypeIndex, pts[urlTypeIndex].getName());
                     code.append(s);
+                    //有URL 属性的参数的URL属性值如果为空，也抛出异常，
                     s = String.format("\nif (arg%d.%s() == null) throw new IllegalArgumentException(\"%s argument %s() == null\");",
                                     urlTypeIndex, attribMethod, pts[urlTypeIndex].getName(), attribMethod);
                     code.append(s);
@@ -896,6 +915,7 @@ public class ExtensionLoader<T> {
                 
                 boolean hasInvocation = false;
                 for (int i = 0; i < pts.length; ++i) {
+                    //如果参数类型有Invocation,不参为空，否则抛
                     if (pts[i].getName().equals("com.alibaba.dubbo.rpc.Invocation")) {
                         // Null Point check
                         String s = String.format("\nif (arg%d == null) throw new IllegalArgumentException(\"invocation == null\");", i);

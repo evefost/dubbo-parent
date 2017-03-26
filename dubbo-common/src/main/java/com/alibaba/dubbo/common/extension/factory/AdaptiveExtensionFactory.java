@@ -24,15 +24,15 @@ import com.alibaba.dubbo.common.extension.ExtensionFactory;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 
 /**
- * AdaptiveExtensionFactory
- * 
+ * AdaptiveExtensionFactory 在ExtensionLoader 第一次加载先创建{ExtensionFactory)实例后，在其构造调用调用getAdaptiveExtension
+ * 适配器的工厂只有一个，
  * @author william.liangf
  */
 @Adaptive
 public class AdaptiveExtensionFactory implements ExtensionFactory {
     
     private final List<ExtensionFactory> factories;
-    
+    //创建完成后，被loader.inject方法，
     public AdaptiveExtensionFactory() {
         ExtensionLoader<ExtensionFactory> loader = ExtensionLoader.getExtensionLoader(ExtensionFactory.class);
         List<ExtensionFactory> list = new ArrayList<ExtensionFactory>();

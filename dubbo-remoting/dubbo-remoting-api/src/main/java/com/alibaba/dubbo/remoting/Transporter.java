@@ -31,6 +31,7 @@ import com.alibaba.dubbo.common.extension.SPI;
  * @see com.alibaba.dubbo.remoting.Transporters
  * @author ding.lid
  * @author william.liangf
+ * @SPI("netty") 将netty 设为默认的实现
  */
 @SPI("netty")
 public interface Transporter {

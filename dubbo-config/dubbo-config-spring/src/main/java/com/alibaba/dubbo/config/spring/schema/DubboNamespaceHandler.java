@@ -15,6 +15,9 @@
  */
 package com.alibaba.dubbo.config.spring.schema;
 
+import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.alibaba.dubbo.common.logger.Logger;
+import com.alibaba.dubbo.common.logger.LoggerFactory;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 import com.alibaba.dubbo.common.Version;
@@ -37,11 +40,16 @@ import com.alibaba.dubbo.config.spring.ServiceBean;
  */
 public class DubboNamespaceHandler extends NamespaceHandlerSupport {
 
+    private static final Logger logger = LoggerFactory.getLogger(DubboNamespaceHandler.class);
+
 	static {
 		Version.checkDuplicate(DubboNamespaceHandler.class);
 	}
 
 	public void init() {
+        logger.warn("========================DubboNamespaceHandler init");
+        logger.warn("========================DubboNamespaceHandler init");
+	    logger.warn("========================DubboNamespaceHandler init");
 	    registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));

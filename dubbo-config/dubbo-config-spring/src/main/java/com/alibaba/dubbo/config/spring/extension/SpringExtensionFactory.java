@@ -39,6 +39,13 @@ public class SpringExtensionFactory implements ExtensionFactory {
         contexts.remove(context);
     }
 
+    /**
+     * springextension 实例又spring 管理，获取时从spring 容器中获取
+     * @param type object type.
+     * @param name object name.
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T> T getExtension(Class<T> type, String name) {
         for (ApplicationContext context : contexts) {

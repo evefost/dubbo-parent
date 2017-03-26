@@ -21,7 +21,9 @@ import com.alibaba.dubbo.common.extension.SPI;
 
 /**
  * SpiExtensionFactory
- * 
+ *  1。getExtension 方法被AdaptiveExtensionFactory 调用，
+ *  2.根据不同扩展接，及别名，获取对应的ExtensionLoader
+ *  3.利用上用得到的extensionLoader ,动态创建adaptivie
  * @author william.liangf
  */
 public class SpiExtensionFactory implements ExtensionFactory {

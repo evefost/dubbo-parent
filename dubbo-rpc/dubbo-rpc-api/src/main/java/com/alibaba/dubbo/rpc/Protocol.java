@@ -23,6 +23,7 @@ import com.alibaba.dubbo.common.extension.SPI;
  * Protocol. (API/SPI, Singleton, ThreadSafe)
  * 
  * @author william.liangf
+ * @SPI("dubbo") 将dubbo 实现协议设为默认的协议，ExtensionLoader 解释出该该别名，作为该扩展接口的一个默认实现
  */
 @SPI("dubbo")
 public interface Protocol {
