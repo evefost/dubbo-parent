@@ -2,6 +2,9 @@ package com.alibaba.dubbo.rpc;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 
+/**
+ * 相当于我上面例子中的AdaptivieExtension ,通过它，传入相应的扩展接口实现别名，获取相应的实例
+ */
 public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
     public void destroy() {
         throw new UnsupportedOperationException("method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!");
