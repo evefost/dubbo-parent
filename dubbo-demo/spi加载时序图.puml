@@ -2,7 +2,7 @@
 Main-> ExtensionLoader:1:ExtensionLoader.getExtesion\nLoader(Container.class)\n(ExtensionLoader 首次被调用，开始spi初始化
 ExtensionLoader -> ExtensionLoader: 2：new ExtensionLoader(Container.class)\n创建containerloader
 ExtensionLoader -> ExtensionLoader: 3：getExtensionLoader(ExtensionFactory.class)\n（如果ExtensionFactory(单例)没创建过，创建)
-ExtensionLoader ->ExtensionLoader:4：getAdaptiveExtension()\n ExtensionFactory创建后将调用该\n从META-INF/dubbo.internal/ExtensionFactory，\n分别载AdaptiveExtensionFactory.class,\nSpiExtensionFactory.class,SrpingExtensionFactory.class\n注意，是Class字节码，还没有创建实例，接下来就是创建实例了
+ExtensionLoader ->ExtensionLoader:4：a.getAdaptiveExtension()\n     b.loadExtensionClasses()\n     c.loadFile()\nExtensionFactory创建后将调用该\n从META-INF/dubbo.internal/ExtensionFactory，\n分别载AdaptiveExtensionFactory.class,\nSpiExtensionFactory.class,SrpingExtensionFactory.class\n注意，是Class字节码，还没有创建实例，接下来就是创建实例了\n注意：在loadfile的过程中，三个factory 只有AdativeFactory标被@Adative被标记
 ExtensionLoader ->AdaptiveExtensionFactory:5：createAdaptiveExtension(创建adaptive工厂，\n上面已经加载了adaptive字节码了，创建实例自然而然的事了)
 AdaptiveExtensionFactory ->ExtensionLoader:6:ExtensionLoader.getExtensionnLoader(ExtensionFactory.class)\n获取ExtensionFactory的Loader,
 ExtensionLoader ->ExtensionLoader:7:getSupportedExtensions()\ngetExtension("spi")\ngetExtension("spring")\n通过ExtensionFactory的Loader取得所有支持的扩展工厂\n(StringExtensionFactory和SpiExtensionFactory 的实例)\n到此createAdaptivieExtension执行完，AdapvativeFactory实例创建完\n也就是说，dubbo spi准备工作完成，等待各种扩展调用
