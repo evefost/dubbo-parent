@@ -65,7 +65,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
         if (! group.startsWith(Constants.PATH_SEPARATOR)) {
             group = Constants.PATH_SEPARATOR + group;
         }
-        this.root = group;
+        this.root = group;//准备订阅的根目录/dubbo
         zkClient = zookeeperTransporter.connect(url);
         zkClient.addStateListener(new StateListener() {
             public void stateChanged(int state) {

@@ -78,7 +78,7 @@ public class Main {
             
             for (Container container : containers) {
                 container.start();
-                logger.info("Dubbo " + container.getClass().getSimpleName() + " started!");
+                logger.info("Dubbo 容器 " + container.getClass().getSimpleName() + " 启动完!");
             }
             System.out.println(new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(new Date()) + " Dubbo service server started!");
         } catch (RuntimeException e) {

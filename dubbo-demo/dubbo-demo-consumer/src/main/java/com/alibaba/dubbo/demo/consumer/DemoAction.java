@@ -19,20 +19,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.alibaba.dubbo.demo.DemoService;
+import com.alibaba.dubbo.demo.TestDemo;
 
 public class DemoAction {
     
     private DemoService demoService;
+    private TestDemo testDemo;
 
     public void setDemoService(DemoService demoService) {
         this.demoService = demoService;
     }
 
-	public void start() throws Exception {
+    public void setTestDemo(TestDemo testDemo) {
+        this.testDemo = testDemo;
+    }
+
+    public void start() throws Exception {
         for (int i = 0; i < Integer.MAX_VALUE; i ++) {
             try {
-            	String hello = demoService.sayHello("world" + i);
-                System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + hello);
+            	//String hello = demoService.sayHello("world" + i);
+                //testDemo.sayHello("测试demo");
+               // System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + hello);
             } catch (Exception e) {
                 e.printStackTrace();
             }

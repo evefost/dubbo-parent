@@ -252,6 +252,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
         checkApplication();
         checkStubAndMock(interfaceClass);
+        //保存某个服务接口信息，以例生成代理
         Map<String, String> map = new HashMap<String, String>();
         Map<Object, Object> attributes = new HashMap<Object, Object>();
         map.put(Constants.SIDE_KEY, Constants.CONSUMER_SIDE);
@@ -298,6 +299,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         //attributes通过系统context进行存储.
         StaticContext.getSystemContext().putAll(attributes);
         ref = createProxy(map);
+        logger.debug("生成消费者代理:"+ref.toString());
     }
     
     private static void checkAndConvertImplicitConfig(MethodConfig method, Map<String,String> map, Map<Object,Object> attributes){
@@ -351,6 +353,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
 		
 		if (isJvmRefer) {
+            //本地引用
 			URL url = new URL(Constants.LOCAL_PROTOCOL, NetUtils.LOCALHOST, 0, interfaceClass.getName()).addParameters(map);
 			invoker = refprotocol.refer(interfaceClass, url);
             if (logger.isInfoEnabled()) {
@@ -387,13 +390,16 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     throw new IllegalStateException("No such any registry to reference " + interfaceName  + " on the consumer " + NetUtils.getLocalHost() + " use dubbo version " + Version.getVersion() + ", please config <dubbo:registry address=\"...\" /> to your spring config.");
                 }
             }
-
+            //客户端订单注册中心消息
+            //Protocol$Adaptive，据协议名，获取对应的协议的invoker 如dubbo协议
             if (urls.size() == 1) {
+                //url中携带注册中?这里相当于订阅
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
                 List<Invoker<?>> invokers = new ArrayList<Invoker<?>>();
                 URL registryURL = null;
                 for (URL url : urls) {
+                    //这里相当于订阅
                     invokers.add(refprotocol.refer(interfaceClass, url));
                     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
                         registryURL = url; // 用了最后一个registry url
@@ -422,7 +428,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         if (logger.isInfoEnabled()) {
             logger.info("Refer dubbo service " + interfaceClass.getName() + " from url " + invoker.getUrl());
         }
-        // 创建服务代理
+        // 创建服务代理,先调用AbstractProxyFactory,再调用JavassistProxyFactory
         return (T) proxyFactory.getProxy(invoker);
     }
 

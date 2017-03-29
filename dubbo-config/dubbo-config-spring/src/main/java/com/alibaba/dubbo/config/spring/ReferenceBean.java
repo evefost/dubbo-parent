@@ -73,7 +73,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     public boolean isSingleton() {
         return true;
     }
-
+    //spring InitializingBean 的方法
     @SuppressWarnings({ "unchecked"})
     public void afterPropertiesSet() throws Exception {
         if (getConsumer() == null) {

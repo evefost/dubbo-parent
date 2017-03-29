@@ -38,9 +38,9 @@ public abstract class AbstractZookeeperClient<TargetChildListener> implements Zo
 		if (i > 0) {
 			create(path.substring(0, i), false);
 		}
-		if (ephemeral) {
+		if (ephemeral) {//临时节点,具体某台主机某个服务才创建临时节点如：/dubbo/com.alibaba.dubbo.demo.DemoService/consumers/consumer%3A%2F%2F192.168.59.1%2Fcom.alibaba.dubbo.demo.DemoService%3Fapplication%3Ddemo-consumer%26category%3Dconsumers%26check%3Dfalse%26dubbo%3D2.0.0%26interface%3Dcom.alibaba.dubbo.demo.DemoService%26methods%3DsayHello%26pid%3D10796%26side%3Dconsumer%26timestamp%3D1490779800632
 			createEphemeral(path);
-		} else {
+		} else { //永久节点dubbo ：/dubbo/com.alibaba.dubbo.demo.DemoService/consumers，没有主机信息
 			createPersistent(path);
 		}
 	}

@@ -143,6 +143,7 @@ public abstract class Proxy
 
 		long id = PROXY_CLASS_COUNTER.getAndIncrement();
 		String pkg = null;
+		//开始用javaassit
 		ClassGenerator ccp = null, ccm = null;
 		try
 		{
