@@ -110,7 +110,8 @@ public class ZookeeperRegistry extends FailbackRegistry {
     }
 
     protected void doSubscribe(final URL url, final NotifyListener listener) {
-        try {
+        logger.warn("====================doSubscribe订阅注册中心信息");
+        try {//订阅所有接口
             if (Constants.ANY_VALUE.equals(url.getServiceInterface())) {
                 String root = toRootPath();
                 ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.get(url);
@@ -144,7 +145,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                                 Constants.CHECK_KEY, String.valueOf(false)), listener);
                     }
                 }
-            } else {
+            } else {//订阅指定接口
                 List<URL> urls = new ArrayList<URL>();
                 for (String path : toCategoriesPath(url)) {
                     ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.get(url);

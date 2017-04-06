@@ -429,6 +429,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             logger.info("Refer dubbo service " + interfaceClass.getName() + " from url " + invoker.getUrl());
         }
         // 创建服务代理,先调用AbstractProxyFactory,再调用JavassistProxyFactory
+        //存入注册后对应的invoker,以被调用对应的service接口代理时调用
         return (T) proxyFactory.getProxy(invoker);
     }
 
