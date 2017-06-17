@@ -98,7 +98,7 @@ public class MockClusterInvoker<T> implements Invoker<T>{
 	private Result doMockInvoke(Invocation invocation,RpcException e){
 		Result result = null;
     	Invoker<T> minvoker ;
-    	
+    	//负载均衡处理
     	List<Invoker<T>> mockInvokers = selectMockInvoker(invocation);
 		if (mockInvokers == null || mockInvokers.size() == 0){
 			minvoker = (Invoker<T>) new MockInvoker(directory.getUrl());

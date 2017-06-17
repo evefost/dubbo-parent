@@ -121,8 +121,11 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
     }
     
     private Invoker<T> doselect(LoadBalance loadbalance, Invocation invocation, List<Invoker<T>> invokers, List<Invoker<T>> selected) throws RpcException {
+        logger.info("负载均衡处理");
+
         if (invokers == null || invokers.size() == 0)
             return null;
+        Invoker<T> testInvoker = loadbalance.select(invokers, getUrl(), invocation);
         if (invokers.size() == 1)
             return invokers.get(0);
         // 如果只有两个invoker，退化成轮循
@@ -213,7 +216,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
     public Result invoke(final Invocation invocation) throws RpcException {
 
         checkWhetherDestroyed();
-
+        logger.debug("负载均衡策略处理");
         LoadBalance loadbalance;
         
         List<Invoker<T>> invokers = list(invocation);

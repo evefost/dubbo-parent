@@ -37,7 +37,7 @@ public class DemoAction {
     public void start() throws Exception {
         for (int i = 0; i < Integer.MAX_VALUE; i ++) {
             try {
-            	//String hello = demoService.sayHello("world" + i);
+            	String hello = demoService.sayHello("world" + i);
                 //testDemo.sayHello("测试demo");
                // System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] " + hello);
             } catch (Exception e) {
